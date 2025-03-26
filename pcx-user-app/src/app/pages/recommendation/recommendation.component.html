@@ -1,1 +1,38 @@
-<p>recommendation works!</p>
+<div class="footer-top"></div>
+<div class="main-container">
+    <div style="width: 300px; margin-right: 40px;">
+        <div>
+            <img class="title" src="../../../assets/icons/pxc.svg">
+            <div class="sub-title" style="background-color: #737373;">
+                Recommendation
+            </div>
+            <div class="sub-title" style="background-color: #D9D9D9; cursor: pointer;"
+                (click)="navigateToLibrary()">
+                Library
+            </div>
+        </div>
+    </div>
+    <div class="book-container" style="width: 100%;">
+        <div class="book" *ngFor="let book of bookList">
+            <div class="book">
+                <div>
+                    <img class="book-image" [src]="book.image">
+                    <div class="book-title">{{book.title}}</div>
+                    <div class="book-author">{{book.author}}</div>
+                    <div class="wishlist-button" (click)="addToWishlist(book.id)">
+                        <span style="font-family: 'sarabun-medium';">Wishlist</span>
+                        <img *ngIf="!book.wishList" src="../../../assets/icons/check.svg">
+                        <img *ngIf="book.wishList" src="../../../assets/icons/cross.svg">
+                    </div>
+                    <div class="rating">
+                        <img class="star"
+                            [src]="i <= book.stars ? '../../../assets/icons/star.svg' : '../../../assets/icons/no-star.svg'"
+                            (click)="rateBook(book.id, i)" *ngFor="let i of [1, 2, 3, 4, 5]" />
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <div class="footer-bottom"></div>
