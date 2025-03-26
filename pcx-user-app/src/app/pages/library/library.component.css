@@ -132,6 +132,7 @@
     font-size: 20px;
     margin-top: 0.5vh;
     overflow-x: hidden;
+    overflow-y: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
     width: 170px;
