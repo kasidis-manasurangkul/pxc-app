@@ -65,8 +65,8 @@
 }
 
 .book-image {
-    width: 170px;
-    height: 220px;
+    width: 150px;
+    height: 200px;
     margin-top: 1vh;
     object-fit: cover;
     border-radius: 10px;
@@ -113,8 +113,8 @@
 }
 
 .star {
-    width: 30px;
-    height: 30px;
+    width: 25px;
+    height: 25px;
     margin-right: 0.5vh;
     cursor: pointer;
 }

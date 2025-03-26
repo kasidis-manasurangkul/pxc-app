@@ -39,7 +39,23 @@
     font-family: 'sarabun-regular';
     color: black;
 }
+@import "~@angular/material/prebuilt-themes/indigo-pink.css";
+.modal {
+    /* add your styles */
+    background-color: transparent !important;
+    overflow: visible !important;
+}
 
+.mat-mdc-dialog-container .mdc-dialog__surface {
+    background-color: transparent !important;
+    box-shadow: none !important;
+    overflow: visible !important;
+}
+.cdk-overlay-dark-backdrop {
+    background: rgba(0, 0, 0, 0.5) !important;
+}
 body {
     margin: 0 !important;
 }
+html, body { height: 100%; }
+body { margin: 0;}

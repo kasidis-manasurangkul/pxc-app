@@ -29,11 +29,11 @@
                 </div>
             </div>
             <div class="search-container">
-                <div style="display: flex; align-items: center; width: 15%; height: 100%; text-align: center;">
+                <div style="display: flex; align-items: center; justify-content: center; width: 15%; height: 100%; text-align: center;">
                     <img src="../assets/icons/search.svg" class="search-icon" />
                 </div>
                 <div
-                    style="display: flex; width: 85%; vertical-align: middle; margin-top: auto; margin-bottom: auto;">
+                    style="display: flex; width: 85%; vertical-align: middle; margin-top: auto; margin-bottom: auto; padding-left: 1vh;">
                     <input type="text" class="form-control" [(ngModel)]="bookSearch" (input)="searchBook()"
                         placeholder="Search..." [ngModelOptions]="{standalone: true}">
                 </div>

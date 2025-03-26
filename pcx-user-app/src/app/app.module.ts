@@ -10,6 +10,9 @@ import { LibraryComponent } from './pages/library/library.component';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
+import { GenresModalComponent } from './modals/genres-modal/genres-modal.component';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { MatDialogModule } from '@angular/material/dialog';
 
 @NgModule({
   declarations: [
@@ -17,7 +20,8 @@ import { RouterModule } from '@angular/router';
     SignInComponent,
     SignUpComponent,
     RecommendationComponent,
-    LibraryComponent
+    LibraryComponent,
+    GenresModalComponent
   ],
   imports: [
       BrowserModule,
@@ -25,6 +29,8 @@ import { RouterModule } from '@angular/router';
       FormsModule,
       RouterModule,
       CommonModule,
+      BrowserAnimationsModule,
+      MatDialogModule,
   ],
   providers: [],
   bootstrap: [AppComponent]
