@@ -15,9 +15,11 @@
                 <button class="tab" [class.active]="activeTab === 'book'" (click)="setTab('book')">Book</button>
                 <button class="tab" [class.active]="activeTab === 'user'" (click)="setTab('user')">User</button>
             </div>
+
             <div class="search-box">
                 <img src="assets/images/search-icon.png" alt="Search" class="search-icon">
-                <input type="text" placeholder="Search..." />
+                <input type="text" placeholder="Search..." [(ngModel)]="searchQuery" (input)="onSearch()"
+                    [ngModelOptions]="{standalone: true}">
             </div>
         </div>
 
@@ -32,13 +34,15 @@
                             <th>No.</th>
                             <th>Book title</th>
                             <th>Author</th>
+                            <th>Status</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr *ngFor="let book of books" (click)="onRowClick(book)">
+                        <tr *ngFor="let book of filteredBooks" (click)="onBookRowClick(book)" [class.selected]="selectedBook === book">
                             <td>{{ book.id }}</td>
                             <td>{{ book.title }}</td>
                             <td>{{ book.author }}</td>
+                            <td>{{ book.status }}</td>
                         </tr>
                     </tbody>
                 </table>
@@ -52,7 +56,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr *ngFor="let user of users" (click)="onRowClick(user)">
+                        <tr *ngFor="let user of filteredUsers" (click)="onUserRowClick(user)" [class.selected]="selectedUser === user">
                             <td>{{ user.id }}</td>
                             <td>{{ user.username }}</td>
                         </tr>

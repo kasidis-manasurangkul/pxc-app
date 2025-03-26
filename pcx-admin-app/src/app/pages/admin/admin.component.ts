@@ -8,36 +8,61 @@ import { Component, ViewChild, ElementRef} from '@angular/core';
 export class AdminComponent {
   activeTab: string = 'book';
   searchQuery: string = '';
-  selectedRow: any;
+  selectedBook: any = null;
+  selectedUser: any = null;
+  filteredBooks: any[] = [];
+  filteredUsers: any[] = [];
 
   // Book and User data
   books = [
-    { id: 1, title: 'Harry Potter', author: 'J.K. Rowling' },
-    { id: 2, title: 'Lord of the Rings', author: 'J.R.R. Tolkien' },
-    { id: 3, title: '1984', author: 'George Orwell' }
+    { id: 1, title: 'Harry Potter', author: 'J.K. Rowling', status: 'Hidden'},
+    { id: 2, title: 'Lord of the Rings', author: 'J.R.R. Tolkien', status: 'Active'},
+    { id: 3, title: '1984', author: 'George Orwell',status: 'Active' }
   ];
 
   users = [
-    { id: 1, username: 'johndoe'},
-    { id: 2, username: 'janedoe'}
+    { id: 1, username: 'johndoe' },
+    { id: 2, username: 'janedoe' }
   ];
+
+  constructor() {
+    this.filteredBooks = [...this.books];
+    this.filteredUsers = [...this.users];
+  }
+
+  onBookRowClick(book: any) {
+    this.selectedBook = book;
+    console.log('Book selected:', book);
+  }
+
+  onUserRowClick(user: any) {
+    this.selectedUser = user;
+    console.log('User selected:', user);
+  }
 
   // Change active tab
   setTab(tab: string): void {
     this.activeTab = tab;
-    this.searchQuery = ''; // reset search when switching
+    this.searchQuery = ''; 
   }
 
-  onRowClick(book: any) {
-    this.selectedRow = book;
-    // Add your click handling logic here
-    // Example: this.router.navigate(['/books', book.id]);
+  onSearch(): void {
+    const query = this.searchQuery.toLowerCase().trim();
+
+    if (this.activeTab === 'book') {
+      this.filteredBooks = this.books.filter(book =>
+        book.title.toLowerCase().includes(query) ||
+        book.author.toLowerCase().includes(query)
+      );
+    } else {
+      this.filteredUsers = this.users.filter(user =>
+        user.username.toLowerCase().includes(query) 
+      );
+    }
   }
 
   deleteUser() {
-    // Add your delete user logic here
     console.log('Delete user clicked');
-    // You might want to get the selected user from your table
   }
 
 

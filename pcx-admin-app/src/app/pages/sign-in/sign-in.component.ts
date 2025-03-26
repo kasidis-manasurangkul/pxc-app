@@ -27,6 +27,10 @@ export class SignInComponent {
     warningPasswordMessage: String = '';
 
 
+    navigateToAdmin() {
+        this.router.navigate(['/admin'])
+    }
+
     submitForm() {
         if (this.signinForm.username == '') {
             this.warningUsernameMessage = 'Please enter your username'
@@ -41,7 +45,7 @@ export class SignInComponent {
             this.isPasswordEmtpy = false;
             this.warningUsernameMessage = '';
             this.warningPasswordMessage = '';
-
+            this.router.navigate(['/'])
             // this.authServ.signIn(this.signinForm).subscribe({
             //     next: (response: any) => {
             //         localStorage.setItem('token', response["token"])

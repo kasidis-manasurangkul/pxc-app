@@ -140,8 +140,14 @@ tbody tr:hover {
     background-color: #666;
 }
 
+tbody tr.selected {
+    background-color: rgb(13, 255, 0);
+    font-weight: bold;
+}
+
 tbody tr:active {
-    background-color: #666;
+    transform: scale(0.99);
+    background-color: rgba(0, 0, 0, 0.3) 
 }
 
 
