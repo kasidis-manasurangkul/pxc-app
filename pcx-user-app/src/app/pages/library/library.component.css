@@ -68,7 +68,6 @@
     width: 30vw;
     height: 6vh;
     border-radius: 10px;
-    border: 2px solid rgba(0, 0, 0, 0.6);
     background: #fff;
     margin: 0 3vh 0 0.5vh;
 }
@@ -121,8 +120,8 @@
 }
 
 .book-image {
-    width: 170px;
-    height: 220px;
+    width: 150px;
+    height: 200px;
     margin-top: 1vh;
     object-fit: cover;
     border-radius: 10px;
@@ -133,6 +132,7 @@
     font-size: 20px;
     margin-top: 0.5vh;
     overflow-x: hidden;
+    overflow-y: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
     width: 170px;
@@ -169,8 +169,8 @@
 }
 
 .star {
-    width: 30px;
-    height: 30px;
+    width: 25px;
+    height: 25px;
     margin-right: 0.5vh;
         cursor: pointer;
 }
