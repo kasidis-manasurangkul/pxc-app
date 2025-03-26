@@ -3,8 +3,8 @@ img {
     display: block;
     margin-left: auto;
     margin-right: auto;
-    width: 54vh;
-    height: 38vh;
+    width: 40vh;
+    height: 40vh;
     margin-bottom: 2vh;
 }
 
@@ -68,7 +68,7 @@ label {
     border: none;
     color: white;
     font-weight: bold;
-    font-size: 1.3vh;
+    font-size: 1.5vh;
     margin-bottom: 1.5vh;
 }
 

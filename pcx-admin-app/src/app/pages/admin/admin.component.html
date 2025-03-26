@@ -1,1 +1,81 @@
-<p>admin works!</p>
+<div class="footer-top"></div>
+
+<div class="screen">
+    <!-- Left side with logo and title -->
+    <div class="left-side">
+        <img src="../../../assets/images/logo-pxc.png" alt="Logo" class="logo-img" />
+        <div class="title-container">Admin</div>
+    </div>
+
+    <!-- Right side with main content -->
+    <div class="main-content-box">
+        <!-- Top bar -->
+        <div class="top-bar">
+            <div class="tabs">
+                <button class="tab" [class.active]="activeTab === 'book'" (click)="setTab('book')">Book</button>
+                <button class="tab" [class.active]="activeTab === 'user'" (click)="setTab('user')">User</button>
+            </div>
+            <div class="search-box">
+                <img src="assets/images/search-icon.png" alt="Search" class="search-icon">
+                <input type="text" placeholder="Search..." />
+            </div>
+        </div>
+
+        <!-- Table and Button Section -->
+        <div class="table-section">
+            <!-- Table Container -->
+            <div class="table-container">
+                <!-- Book Table -->
+                <table *ngIf="activeTab === 'book'">
+                    <thead>
+                        <tr>
+                            <th>No.</th>
+                            <th>Book title</th>
+                            <th>Author</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let book of books" (click)="onRowClick(book)">
+                            <td>{{ book.id }}</td>
+                            <td>{{ book.title }}</td>
+                            <td>{{ book.author }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <!-- User Table -->
+                <table *ngIf="activeTab === 'user'">
+                    <thead>
+                        <tr>
+                            <th>No.</th>
+                            <th>Username</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let user of users" (click)="onRowClick(user)">
+                            <td>{{ user.id }}</td>
+                            <td>{{ user.username }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Hide button -->
+            <button class="toggle-button" [class.hide-button]="activeTab === 'book' && isTableVisible"
+                [class.show-button]="activeTab === 'book' && !isTableVisible" [class.delete-button]="activeTab === 'user'"
+                (click)="activeTab === 'user' ? deleteUser() : toggleTable()">
+            
+                <!-- For Book Tab -->
+                <span *ngIf="activeTab === 'book'" class="button-content">
+                    <img *ngIf="isTableVisible" src="assets/images/hide-button-icon.png" alt="Hide" class="button-icon">
+                    <img *ngIf="!isTableVisible" src="assets/images/show-button-icon.png" alt="Show" class="button-icon">
+                    {{ isTableVisible ? 'Hide' : 'Show' }}
+                </span>
+                <!-- For User Tab -->
+                <span *ngIf="activeTab === 'user'">Delete</span>
+            </button>
+        </div>
+    </div>
+</div>
+
+<div class="footer-bottom"></div>

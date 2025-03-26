@@ -29,11 +29,11 @@ export class SignInComponent {
 
     submitForm() {
         if (this.signinForm.username == '') {
-            this.warningUsernameMessage = 'กรุณากรอกชื่อ'
+            this.warningUsernameMessage = 'Please enter your username'
             this.isUsernameEmtpy = true;
         }
         if (this.signinForm.password == '') {
-            this.warningPasswordMessage = 'กรุณากรอกรหัสผ่าน'
+            this.warningPasswordMessage = 'Please enter your password'
             this.isPasswordEmtpy = true;
         }
         if (this.signinForm.username != '' && this.signinForm.password != '') {
