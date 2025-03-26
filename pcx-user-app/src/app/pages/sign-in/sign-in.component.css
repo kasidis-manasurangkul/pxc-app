@@ -27,6 +27,10 @@ label {
     margin-right: auto;
 }
 
+.form-control {
+    padding: 0 5px 0 5px;
+}
+
 .checkbox-container {
     display: flex;
     flex-direction: row;
@@ -56,6 +60,7 @@ label {
 }
 
 .form-check-label {
+    font-family: 'sarabun-light';
     line-height: 2;
     vertical-align: top;
 }

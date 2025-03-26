@@ -26,14 +26,17 @@ export class SignInComponent {
     warningUsernameMessage: String = '';
     warningPasswordMessage: String = '';
 
+    navigateToSignUp() {
+        this.router.navigate(['/sign-up'])
+    }
 
     submitForm() {
         if (this.signinForm.username == '') {
-            this.warningUsernameMessage = 'กรุณากรอกชื่อ'
+            this.warningUsernameMessage = 'Please enter your username'
             this.isUsernameEmtpy = true;
         }
         if (this.signinForm.password == '') {
-            this.warningPasswordMessage = 'กรุณากรอกรหัสผ่าน'
+            this.warningPasswordMessage = 'Please enter your password'
             this.isPasswordEmtpy = true;
         }
         if (this.signinForm.username != '' && this.signinForm.password != '') {
@@ -41,7 +44,7 @@ export class SignInComponent {
             this.isPasswordEmtpy = false;
             this.warningUsernameMessage = '';
             this.warningPasswordMessage = '';
-
+            this.router.navigate(['/'])
             // this.authServ.signIn(this.signinForm).subscribe({
             //     next: (response: any) => {
             //         localStorage.setItem('token', response["token"])
