@@ -13,6 +13,7 @@ import { RouterModule } from '@angular/router';
 import { GenresModalComponent } from './modals/genres-modal/genres-modal.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatDialogModule } from '@angular/material/dialog';
+import { SettingsComponent } from './pages/settings/settings.component';
 
 @NgModule({
   declarations: [
@@ -21,7 +22,8 @@ import { MatDialogModule } from '@angular/material/dialog';
     SignUpComponent,
     RecommendationComponent,
     LibraryComponent,
-    GenresModalComponent
+    GenresModalComponent,
+    SettingsComponent
   ],
   imports: [
       BrowserModule,
