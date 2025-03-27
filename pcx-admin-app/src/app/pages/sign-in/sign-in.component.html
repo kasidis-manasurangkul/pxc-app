@@ -16,13 +16,6 @@
                     [ngClass]="{'inputemptyWarning': isPasswordEmtpy}">
                 <p class="textemptyWarning" [ngClass]="{'warn': isPasswordEmtpy}">{{warningPasswordMessage}}</p>
             </div>
-            <div class="checkbox-container">
-                <div class="form-check" style="margin-bottom: 5px;">
-                    <input type="checkbox" class="form-check-input" id="exampleCheck1" [(ngModel)]="isChecked"
-                        [ngModelOptions]="{standalone: true}">
-                    <label class="form-check-label" for="exampleCheck1">Remember me</label>
-                </div>
-            </div>
             <div style="text-align: center;"><button type="submit" (click)="submitForm()" class="btn btn-primary">Sign
                     in admin</button></div>
 
