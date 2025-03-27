@@ -5,12 +5,14 @@ import { RecommendationComponent } from './pages/recommendation/recommendation.c
 import { LibraryComponent } from './pages/library/library.component';
 import { SignUpComponent } from './pages/sign-up/sign-up.component';
 import { SettingsComponent } from './pages/settings/settings.component';
+import { BrowseComponent } from './pages/browse/browse.component';
 
 const routes: Routes = [
     { path: '', redirectTo: 'recommendation', pathMatch: 'full' },
     { path: 'sign-in', component: SignInComponent },
     { path: 'sign-up', component: SignUpComponent },
     { path: 'settings', component: SettingsComponent},
+    { path: 'browse', component: BrowseComponent},
     { path: 'recommendation', component: RecommendationComponent},
     { path: 'library', component: LibraryComponent},
 ];

@@ -54,4 +54,12 @@ export class RecommendationComponent {
         // navigate to library page
         this.router.navigate(['/library'])
     }
+
+    navigateToBrowse() {
+    }
+
+    navigateToSettings() {
+        // navigate to library page
+        this.router.navigate(['/settings'])
+    }
 }

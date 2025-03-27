@@ -14,6 +14,7 @@ import { GenresModalComponent } from './modals/genres-modal/genres-modal.compone
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatDialogModule } from '@angular/material/dialog';
 import { SettingsComponent } from './pages/settings/settings.component';
+import { BrowseComponent } from './pages/browse/browse.component';
 
 @NgModule({
   declarations: [
@@ -23,7 +24,8 @@ import { SettingsComponent } from './pages/settings/settings.component';
     RecommendationComponent,
     LibraryComponent,
     GenresModalComponent,
-    SettingsComponent
+    SettingsComponent,
+    BrowseComponent
   ],
   imports: [
       BrowserModule,

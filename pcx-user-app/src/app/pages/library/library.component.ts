@@ -62,8 +62,19 @@ export class LibraryComponent {
         
     }
 
-    navigateToLibrary() {
-        // navigate to library page
+    navigateToRecommend() {
+        // navigate to Recommend page
         this.router.navigate(['/recommendation'])
     }
+
+    navigateToBrowse() {
+        // navigate to Browse page
+    }
+
+    navigateToSettings() {
+        // navigate to Settings page
+        this.router.navigate(['/settings'])
+    }
+
+    
 }
