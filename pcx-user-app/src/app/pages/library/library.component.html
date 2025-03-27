@@ -5,7 +5,7 @@
             <img class="title" src="../../../assets/icons/pxc.svg">
             <div class="sub-title" style="background-color: #D9D9D9;     cursor: pointer;"
                 (click)="navigateToLibrary()">
-                Recommendation
+                Recommend
             </div>
             <div class="sub-title" style="background-color: #737373; ">
                 Library
@@ -64,7 +64,7 @@
                         <div class="book-title">{{book.title}}</div>
                         <div class="book-author">{{book.author}}</div>
                         <div class="wishlist-button" (click)="addToWishlist(book.id)">
-                            <span style="font-family: 'sarabun-medium';">Wishlist</span>
+                            <span style="font-family: 'sarabun-medium'; margin-right: 1px;">Wishlist</span>
                             <img *ngIf="!book.wishList" src="../../../assets/icons/check.svg">
                             <img *ngIf="book.wishList" src="../../../assets/icons/cross.svg">
                         </div>
