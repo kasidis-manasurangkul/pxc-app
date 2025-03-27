@@ -56,6 +56,7 @@ export class RecommendationComponent {
     }
 
     navigateToBrowse() {
+        this.router.navigate(['/browse'])
     }
 
     navigateToSettings() {

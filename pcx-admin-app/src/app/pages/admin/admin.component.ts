@@ -1,4 +1,5 @@
-import { Component, ViewChild, ElementRef} from '@angular/core';
+import { Component, ViewChild, ElementRef,} from '@angular/core';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-admin',
@@ -6,6 +7,8 @@ import { Component, ViewChild, ElementRef} from '@angular/core';
   styleUrls: ['./admin.component.css']
 })
 export class AdminComponent {
+
+  
   activeTab: string = 'book';
   searchQuery: string = '';
   selectedBook: any = null;
@@ -25,7 +28,27 @@ export class AdminComponent {
     { id: 2, username: 'janedoe' }
   ];
 
-  constructor() {
+  logout() {
+    const confirmLogout = window.confirm('Are you sure you want to logout?');
+    if (confirmLogout) {
+      // Clear login/session state (example)
+      localStorage.removeItem('authToken');
+      sessionStorage.clear();
+
+      // Navigate to login page
+      this.navigateToLogin();
+
+      console.log('Logout successful.');
+    } else {
+      console.log('Logout canceled.');
+    }
+  }
+
+  navigateToLogin() {
+    this.router.navigate(['/sign-in'])
+  }
+  
+  constructor(private router: Router) {
     this.filteredBooks = [...this.books];
     this.filteredUsers = [...this.users];
   }
@@ -100,7 +123,6 @@ export class AdminComponent {
       this.onSearch();
     }
   }
-  
 
 }
 

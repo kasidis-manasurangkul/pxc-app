@@ -19,7 +19,7 @@ export class SettingsComponent {
     }
 
     navigateToBrowse() {
-
+        this.router.navigate(['/browse'])
     }
 
     navigateToSignIn() {

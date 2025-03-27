@@ -1,10 +1,14 @@
 <div class="footer-top"></div>
 
 <div class="screen">
-    <!-- Left side with logo and title -->
+    <!-- Left side with logo, title, logout button-->
     <div class="left-side">
-        <img src="../../../assets/images/logo-pxc.png" alt="Logo" class="logo-img" />
+        <img src="../../../assets/images/parnon-logo.svg" alt="Logo" class="logo-img" />
         <div class="title-container">Admin</div>
+        <div class="logout-button" (click)="logout()">
+            Log Out
+            <img src="../../../assets/images/logout-icon.png" alt="Logout" class="logout-img">
+        </div>
     </div>
 
     <!-- Right side with main content -->
@@ -66,8 +70,7 @@
             </div>
             
         
-     
-
+    
         <!-- Always-visible button -->
         <button class="toggle-button" [disabled]="activeTab === 'book' && !selectedBook"
             [class.hide-button]="activeTab === 'book' && selectedBook && !isSelectedBookHidden"

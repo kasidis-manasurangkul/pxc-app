@@ -69,6 +69,7 @@ export class LibraryComponent {
 
     navigateToBrowse() {
         // navigate to Browse page
+        this.router.navigate(['/browse'])
     }
 
     navigateToSettings() {
