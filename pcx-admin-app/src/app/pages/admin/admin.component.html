@@ -46,6 +46,7 @@
                         </tr>
                     </tbody>
                 </table>
+                
 
                 <!-- User Table -->
                 <table *ngIf="activeTab === 'user'">
@@ -63,21 +64,30 @@
                     </tbody>
                 </table>
             </div>
-
-            <!-- Hide button -->
-            <button class="toggle-button" [class.hide-button]="activeTab === 'book' && isTableVisible"
-                [class.show-button]="activeTab === 'book' && !isTableVisible" [class.delete-button]="activeTab === 'user'"
-                (click)="activeTab === 'user' ? deleteUser() : toggleTable()">
             
-                <!-- For Book Tab -->
-                <span *ngIf="activeTab === 'book'" class="button-content">
-                    <img *ngIf="isTableVisible" src="assets/images/hide-button-icon.png" alt="Hide" class="button-icon">
-                    <img *ngIf="!isTableVisible" src="assets/images/show-button-icon.png" alt="Show" class="button-icon">
-                    {{ isTableVisible ? 'Hide' : 'Show' }}
-                </span>
-                <!-- For User Tab -->
-                <span *ngIf="activeTab === 'user'">Delete</span>
-            </button>
+        
+     
+
+        <!-- Always-visible button -->
+        <button class="toggle-button" [disabled]="activeTab === 'book' && !selectedBook"
+            [class.hide-button]="activeTab === 'book' && selectedBook && !isSelectedBookHidden"
+            [class.show-button]="activeTab === 'book' && selectedBook && isSelectedBookHidden"
+            [class.delete-button]="activeTab === 'user'" (click)="activeTab === 'user' ? deleteUser() : toggleBookStatus()">
+        
+            <!-- Book Tab Label -->
+            <span *ngIf="activeTab === 'book'" class="button-content">
+                <img *ngIf="selectedBook && !isSelectedBookHidden" src="assets/images/hide-button-icon.png" alt="Hide"
+                    class="button-icon">
+                <img *ngIf="selectedBook && isSelectedBookHidden" src="assets/images/show-button-icon.png" alt="Show"
+                    class="button-icon">
+                {{ selectedBook ? (isSelectedBookHidden ? 'Show' : 'Hide') : 'Show/Hide' }}
+            </span>
+        
+            <!-- User Tab Label -->
+            <span *ngIf="activeTab === 'user'">Delete</span>
+        </button>
+
+
         </div>
     </div>
 </div>

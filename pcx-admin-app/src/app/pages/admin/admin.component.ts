@@ -62,8 +62,20 @@ export class AdminComponent {
   }
 
   deleteUser() {
-    console.log('Delete user clicked');
+    if (this.selectedUser) {
+      const confirmDelete = window.confirm(`Are you sure you want to delete user "${this.selectedUser.username}"?`);
+
+      if (confirmDelete) {
+        this.users = this.users.filter(user => user.id !== this.selectedUser.id);
+        this.filteredUsers = [...this.users];
+        this.selectedUser = null;
+        console.log('User deleted.');
+      } else {
+        console.log('User deletion canceled.');
+      }
+    }
   }
+
 
 
   isTableVisible = true;
@@ -72,14 +84,23 @@ export class AdminComponent {
   @ViewChild('hideButton') hideButton!: ElementRef;
   @ViewChild('showButton') showButton!: ElementRef;
 
-  toggleTable() {
-    this.isTableVisible = !this.isTableVisible;
+  get isSelectedBookHidden(): boolean {
+    return this.selectedBook?.status === 'Hidden';
+  }
 
-    if (this.tableContainer && this.hideButton && this.showButton) {
-      this.tableContainer.nativeElement.style.display = this.isTableVisible ? 'block' : 'none';
-      this.hideButton.nativeElement.style.display = this.isTableVisible ? 'flex' : 'none';
-      this.showButton.nativeElement.style.display = this.isTableVisible ? 'none' : 'flex';
+  toggleBookStatus() {
+    if (this.selectedBook) {
+      this.selectedBook.status = this.selectedBook.status === 'Active' ? 'Hidden' : 'Active';
+
+      const index = this.books.findIndex(b => b.id === this.selectedBook.id);
+      if (index !== -1) {
+        this.books[index].status = this.selectedBook.status;
+      }
+
+      this.onSearch();
     }
   }
+  
+
 }
 
