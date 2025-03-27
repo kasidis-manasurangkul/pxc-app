@@ -15,6 +15,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatDialogModule } from '@angular/material/dialog';
 import { SettingsComponent } from './pages/settings/settings.component';
 import { BrowseComponent } from './pages/browse/browse.component';
+import { ConsentModalComponent } from './modals/consent-modal/consent-modal.component';
 
 @NgModule({
   declarations: [
@@ -25,7 +26,8 @@ import { BrowseComponent } from './pages/browse/browse.component';
     LibraryComponent,
     GenresModalComponent,
     SettingsComponent,
-    BrowseComponent
+    BrowseComponent,
+    ConsentModalComponent
   ],
   imports: [
       BrowserModule,

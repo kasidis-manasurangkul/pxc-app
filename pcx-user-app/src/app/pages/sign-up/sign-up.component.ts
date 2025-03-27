@@ -1,13 +1,15 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
+import { ConsentModalService } from 'src/app/modals/consent-modal/consent-modal.service';
 
 @Component({
-  selector: 'app-sign-up',
-  templateUrl: './sign-up.component.html',
-  styleUrls: ['./sign-up.component.css']
+    selector: 'app-sign-up',
+    templateUrl: './sign-up.component.html',
+    styleUrls: ['./sign-up.component.css']
 })
 export class SignUpComponent {
-ngOnInit(): void {
+
+    ngOnInit(): void {
         if (localStorage.getItem('username') != null && localStorage.getItem('password') != null) {
             this.signinForm.username = localStorage.getItem('username')!
             this.signinForm.password = localStorage.getItem('password')!
@@ -15,7 +17,7 @@ ngOnInit(): void {
         }
     }
 
-    constructor(private router: Router) { }
+    constructor(private router: Router, private consentModalServe: ConsentModalService) { }
     signinForm = {
         username: '',
         password: '',
@@ -44,7 +46,15 @@ ngOnInit(): void {
             this.isPasswordEmtpy = false;
             this.warningUsernameMessage = '';
             this.warningPasswordMessage = '';
-            this.router.navigate(['/'])
+            this.consentModalServe.openModal().subscribe({
+                next: (response: any) => {
+                    this.router.navigate(['/'])
+                },
+                error: (err: any) => {
+                    alert("Failed to sign up")
+                }
+            })
+            
             // this.authServ.signIn(this.signinForm).subscribe({
             //     next: (response: any) => {
             //         localStorage.setItem('token', response["token"])
