@@ -42,7 +42,8 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr *ngFor="let book of filteredBooks" (click)="onBookRowClick(book)" [class.selected]="selectedBook === book">
+                        <tr *ngFor="let book of filteredBooks" (click)="onBookRowClick(book)"
+                            [class.selected]="selectedBook === book">
                             <td>{{ book.id }}</td>
                             <td>{{ book.title }}</td>
                             <td>{{ book.author }}</td>
@@ -50,7 +51,7 @@
                         </tr>
                     </tbody>
                 </table>
-                
+
 
                 <!-- User Table -->
                 <table *ngIf="activeTab === 'user'">
@@ -61,36 +62,43 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr *ngFor="let user of filteredUsers" (click)="onUserRowClick(user)" [class.selected]="selectedUser === user">
+                        <tr *ngFor="let user of filteredUsers" (click)="onUserRowClick(user)"
+                            [class.selected]="selectedUser === user">
                             <td>{{ user.id }}</td>
                             <td>{{ user.username }}</td>
                         </tr>
                     </tbody>
                 </table>
             </div>
-            
-        
-    
-        <!-- Always-visible button -->
-        <button class="toggle-button" [disabled]="activeTab === 'book' && !selectedBook"
-            [class.hide-button]="activeTab === 'book' && selectedBook && !isSelectedBookHidden"
-            [class.show-button]="activeTab === 'book' && selectedBook && isSelectedBookHidden"
-            [class.delete-button]="activeTab === 'user'" (click)="activeTab === 'user' ? deleteUser() : toggleBookStatus()">
-        
-            <!-- Book Tab Label -->
-            <span *ngIf="activeTab === 'book'" class="button-content">
-                <img *ngIf="selectedBook && !isSelectedBookHidden" src="assets/images/hide-button-icon.png" alt="Hide"
-                    class="button-icon">
-                <img *ngIf="selectedBook && isSelectedBookHidden" src="assets/images/show-button-icon.png" alt="Show"
-                    class="button-icon">
-                {{ selectedBook ? (isSelectedBookHidden ? 'Show' : 'Hide') : 'Show/Hide' }}
-            </span>
-        
-            <!-- User Tab Label -->
-            <span *ngIf="activeTab === 'user'">Delete</span>
-        </button>
 
 
+
+            <!-- User Action Buttons (Only shown on User tab) -->
+            <div style="padding:0%; display:flex; align-items:end">
+                <div *ngIf="activeTab === 'user'" class="user-buttons">
+                    <div class="user-action-button delete-button" (click)="deleteUser()">
+                        Delete
+                    </div>
+                    <div class="user-action-button add-admin-button" (click)="addAdmin()">
+                        Add Admin
+                    </div>
+                </div>
+            </div>
+
+            <!-- Book Action Button (Only shown on Book tab) -->
+            <div style="padding:0%; display:flex; align-items:end">
+                <div *ngIf="activeTab === 'book'" class="book-toggle-button"
+                    [class.hide-button]="selectedBook && !isSelectedBookHidden"
+                    [class.show-button]="selectedBook && isSelectedBookHidden" (click)="toggleBookStatus()">
+                    <span class="button-content">
+                        <img *ngIf="selectedBook && !isSelectedBookHidden" src="assets/images/hide-button-icon.png"
+                            alt="Hide" class="button-icon">
+                        <img *ngIf="selectedBook && isSelectedBookHidden" src="assets/images/show-button-icon.png"
+                            alt="Show" class="button-icon">
+                        {{ selectedBook ? (isSelectedBookHidden ? 'Show' : 'Hide') : 'Show/Hide' }}
+                    </span>
+                </div>
+            </div>
         </div>
     </div>
 </div>

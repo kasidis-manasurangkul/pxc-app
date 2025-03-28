@@ -1,5 +1,6 @@
 import { Component, ViewChild, ElementRef,} from '@angular/core';
 import { Router } from '@angular/router';
+import { AddAdminModalService } from 'src/app/modals/add-admin-modal/add-admin-modal.service';
 
 @Component({
   selector: 'app-admin',
@@ -48,7 +49,7 @@ export class AdminComponent {
     this.router.navigate(['/sign-in'])
   }
   
-  constructor(private router: Router) {
+  constructor(private router: Router, private addAdminModalServe: AddAdminModalService) {
     this.filteredBooks = [...this.books];
     this.filteredUsers = [...this.users];
   }
@@ -99,6 +100,25 @@ export class AdminComponent {
     }
   }
 
+  addAdmin() {
+    this.addAdminModalServe.openModal().subscribe({
+      next: (data: any) => {
+        this.router.navigate(['/'])
+        if (data) {
+          this.users.push({ id: this.users.length + 1, username: data });
+          this.filteredUsers = [...this.users];
+          console.log('Admin added:', data);
+        }
+      },
+      error: (err: any) => {
+        alert("Failed to sign up")
+      }
+    })
+  }
+
+  
+
+  
 
 
   isTableVisible = true;

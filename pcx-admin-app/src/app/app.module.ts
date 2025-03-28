@@ -9,6 +9,8 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { AddAdminModalComponent } from './modals/add-admin-modal/add-admin-modal.component';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { MatDialogModule } from '@angular/material/dialog';
 
 @NgModule({
     declarations: [
@@ -23,6 +25,8 @@ import { AddAdminModalComponent } from './modals/add-admin-modal/add-admin-modal
         FormsModule,
         RouterModule,
         CommonModule,
+        MatDialogModule,
+        BrowserAnimationsModule,
 
     ],
     providers: [],
