@@ -126,23 +126,32 @@ label {
 
 
 
-/* warning style  */
 .inputemptyWarning {
     border-width: 0.1vh !important;
     border: solid;
     border-color: red;
+    justify-content: center;
+
 }
+
 
 .textemptyWarning {
     color: red;
     font-size: 1.2vh;
     font-weight: 500;
-    display: none;
     padding-left: 0.5vh;
     margin-top: 0.3vh;
+    visibility: hidden;
+    word-wrap: normal;
+    width: 35vh;
+}
 
+.warn {
+    visibility: visible !important;
 }
 
 .warn {
     display: block !important;
+    
 }
+

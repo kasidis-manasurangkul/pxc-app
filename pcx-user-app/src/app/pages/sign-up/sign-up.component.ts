@@ -1,77 +1,119 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 
 @Component({
-  selector: 'app-sign-up',
-  templateUrl: './sign-up.component.html',
-  styleUrls: ['./sign-up.component.css']
+    selector: 'app-sign-up',
+    templateUrl: './sign-up.component.html',
+    styleUrls: ['./sign-up.component.css']
 })
-export class SignUpComponent {
-ngOnInit(): void {
-        if (localStorage.getItem('username') != null && localStorage.getItem('password') != null) {
-            this.signinForm.username = localStorage.getItem('username')!
-            this.signinForm.password = localStorage.getItem('password')!
+export class SignUpComponent implements OnInit {
+    signinForm = {
+        username: '',
+        password: '',
+        confirmPassword: ''
+    };
+
+    isChecked: boolean = false;
+    formSubmitted: boolean = false;
+
+    isPasswordEmpty: boolean = false;
+    isUsernameEmpty: boolean = false;
+    isConfirmPasswordEmpty: boolean = false;
+    
+    isPasswordInvalid: boolean = false;
+    warningUsernameMessage: string = '';
+    warningPasswordMessage: string = '';
+    warningConfirmPasswordMessage: string = '';
+
+    constructor(private router: Router) { }
+
+    ngOnInit(): void {
+        const storedUsername = localStorage.getItem('username');
+        const storedPassword = localStorage.getItem('password');
+
+        if (storedUsername && storedPassword) {
+            this.signinForm.username = storedUsername;
+            this.signinForm.password = storedPassword;
             this.isChecked = true;
         }
     }
 
-    constructor(private router: Router) { }
-    signinForm = {
-        username: '',
-        password: '',
+    isPasswordValid(password: string): boolean {
+        const pattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&_. ,])[A-Za-z\d@$!%*?&_. ,]{6,}$/;
+        return pattern.test(password);
     }
-    isChecked: boolean = false;
-    isUsernameEmtpy: boolean = false;
-    isPasswordEmtpy: boolean = false;
-    warningUsernameMessage: String = '';
-    warningPasswordMessage: String = '';
 
+    validatePassword(): void {
+        const password = this.signinForm.password;
 
-    navigateToSignIn() {
-        this.router.navigate(['/sign-in'])
-    }
-    submitForm() {
-        if (this.signinForm.username == '') {
-            this.warningUsernameMessage = 'Please enter your username'
-            this.isUsernameEmtpy = true;
-        }
-        if (this.signinForm.password == '') {
-            this.warningPasswordMessage = 'Please enter your password'
-            this.isPasswordEmtpy = true;
-        }
-        if (this.signinForm.username != '' && this.signinForm.password != '') {
-            this.isUsernameEmtpy = false;
-            this.isPasswordEmtpy = false;
-            this.warningUsernameMessage = '';
+        if (!password && this.formSubmitted) {
+            this.warningPasswordMessage = 'Please enter your password';
+            this.isPasswordInvalid = false;
+        } else if (password && !this.isPasswordValid(password)) {
+            this.warningPasswordMessage =
+                'Password must be at least 6 characters, include uppercase, lowercase, number, and special character.';
+            this.isPasswordInvalid = true;
+        } else {
             this.warningPasswordMessage = '';
-            this.router.navigate(['/'])
-            // this.authServ.signIn(this.signinForm).subscribe({
-            //     next: (response: any) => {
-            //         localStorage.setItem('token', response["token"])
-            //         if (this.isChecked) {
-            //             localStorage.setItem('username', this.signinForm.username)
-            //             localStorage.setItem('password', this.signinForm.password)
-            //         }
-            //         else {
-            //             localStorage.removeItem('username')
-            //             localStorage.removeItem('password')
-            //         }
-            //     },
-            //     error: (err: any) => {
-            //         if (err["error"]["message"].includes("username")) {
-            //             this.warningUsernameMessage = "ชื่อผู้ใช้ไม่ถูกต้อง"
-            //             this.isUsernameEmtpy = true;
-            //         }
-            //         if (err["error"]["message"].includes("password")) {
-            //             this.warningPasswordMessage = "รหัสผ่านไม่ถูกต้อง"
-            //             this.isPasswordEmtpy = true;
-            //         }
-            //     },
-            //     complete: () => {
-            //         this.getProfileData();
-            //         this.router.navigate(['/'])
-            //     }
-            // })
+            this.isPasswordInvalid = false;
         }
+
+        this.validateConfirmPassword();
+    }
+
+    validateConfirmPassword(): void {
+        const { password, confirmPassword } = this.signinForm;
+
+        if (!confirmPassword && this.formSubmitted) {
+            this.warningConfirmPasswordMessage = 'Please confirm your password';
+        } else if (password !== confirmPassword && confirmPassword) {
+            this.warningConfirmPasswordMessage = 'Passwords do not match';
+        } else {
+            this.warningConfirmPasswordMessage = '';
+        }
+    }
+
+    validateUsername(): void {
+        const username = this.signinForm.username.trim();
+        if (!username && this.formSubmitted) {
+            this.warningUsernameMessage = 'Please enter your username';
+        } else {
+            this.warningUsernameMessage = '';
+        }
+    }
+
+    validateAllFields(): void {
+        this.validateUsername();
+        this.validatePassword();
+        this.validateConfirmPassword();
+    }
+
+    submitForm(): void {
+        this.formSubmitted = true;
+        this.validateAllFields();
+
+        const isEmpty =
+            !this.signinForm.username.trim() ||
+            !this.signinForm.password ||
+            !this.signinForm.confirmPassword;
+
+        const hasError =
+            isEmpty || this.isPasswordInvalid || this.warningConfirmPasswordMessage !== '';
+
+        if (!hasError) {
+            if (this.isChecked) {
+                localStorage.setItem('username', this.signinForm.username);
+                localStorage.setItem('password', this.signinForm.password);
+            } else {
+                localStorage.removeItem('username');
+                localStorage.removeItem('password');
+            }
+
+            this.router.navigate(['/']);
+        }
+    }
+
+    navigateToSignIn(): void {
+        this.router.navigate(['/sign-in']);
     }
 }

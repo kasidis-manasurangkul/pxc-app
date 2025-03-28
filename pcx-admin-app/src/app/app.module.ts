@@ -8,12 +8,14 @@ import { AdminComponent } from './pages/admin/admin.component';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
+import { AddAdminModalComponent } from './modals/add-admin-modal/add-admin-modal.component';
 
 @NgModule({
     declarations: [
         AppComponent,
         SignInComponent,
-        AdminComponent
+        AdminComponent,
+        AddAdminModalComponent
     ],
     imports: [
         BrowserModule,
