@@ -1,81 +1,140 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { LibraryService } from 'src/app/core/http/library/library.service';
 
 @Component({
-  selector: 'app-library',
-  templateUrl: './library.component.html',
-  styleUrls: ['./library.component.css']
+    selector: 'app-library',
+    templateUrl: './library.component.html',
+    styleUrls: ['./library.component.css']
 })
-export class LibraryComponent {
+export class LibraryComponent implements OnInit {
 
-    constructor(private router: Router) {}
-    bookList = [
-        { id: 1, title: 'Harry Potter', author: 'J.K. Rowling', wishList: true, stars: 4, image: 'assets/icons/main-icon.svg'},
-        { id: 2, title: 'The Hobbit', author: 'J.R.R. Tolkien', wishList: true, stars: 5, image: 'assets/icons/main-icon.svg'},
-        { id: 3, title: 'The Da Vinci Code', author: 'Dan Brown', wishList: true, stars: 3, image: 'assets/icons/main-icon.svg'},
-        { id: 4, title: 'The Alchemist', author: 'Paulo Coelho', wishList: true, stars: 4, image: 'assets/icons/main-icon.svg'},
-        { id: 5, title: 'The Catcher in the Rye', author: 'J.D. Salinger', wishList: true, stars: 2, image: 'assets/icons/main-icon.svg'},
-        { id: 6, title: 'The Great Gatsby', author: 'F. Scott Fitzgerald', wishList: true, stars: 5, image: 'assets/icons/main-icon.svg'},
-    ]
-    backup = [
-        { id: 1, title: 'Harry Potter', author: 'J.K. Rowling', wishList: true, stars: 4, image: 'assets/icons/main-icon.svg'},
-        { id: 2, title: 'The Hobbit', author: 'J.R.R. Tolkien', wishList: true, stars: 5, image: 'assets/icons/main-icon.svg'},
-        { id: 3, title: 'The Da Vinci Code', author: 'Dan Brown', wishList: true, stars: 3, image: 'assets/icons/main-icon.svg'},
-        { id: 4, title: 'The Alchemist', author: 'Paulo Coelho', wishList: true, stars: 4, image: 'assets/icons/main-icon.svg'},
-        { id: 5, title: 'The Catcher in the Rye', author: 'J.D. Salinger', wishList: true, stars: 2, image: 'assets/icons/main-icon.svg'},
-        { id: 6, title: 'The Great Gatsby', author: 'F. Scott Fitzgerald', wishList: true, stars: 5, image: 'assets/icons/main-icon.svg'},
-    ]
-    page: String = 'rating'
-    bookSearch: String = ''
-    
+    // Holds the list of rated books (or wishlist books if extended later)
+    ratingList: any[] = [];
+    wishList: any[] = [];
+    ratingBackup: any[] = [];
+    wishListBackup: any[] = [];
+    page: String = 'rating';
+    bookSearch: String = '';
+
+
+    constructor(
+        private router: Router,
+        private libraryService: LibraryService
+    ) { }
+
+    ngOnInit() {
+        this.getListRatings();
+        this.getWishList();
+    }
 
     changePage(page: String) {
-        if (page === 'wishlist') {
-            this.page = 'wishlist'
+        this.page = page;
+    }
+
+    search() {
+        if (this.page == 'rating') {
+            this.ratingList = this.ratingBackup.filter(book => book.title.toLowerCase().includes(this.bookSearch.toLowerCase()))
         }
-        else {
-            this.page = 'rating'
+        if (this.page == 'wishlist') {
+            this.wishList = this.wishListBackup.filter(book => book.title.toLowerCase().includes(this.bookSearch.toLowerCase()))
         }
     }
 
-    searchBook() {
-        // filter out books that don't match search
-        this.bookList = this.backup.filter(book => book.title.toLowerCase().includes(this.bookSearch.toLowerCase()))
+
+    // Fetch the list of rated books from the backend
+    getListRatings() {
+        this.libraryService.getListRatings().subscribe({
+            next: (response: any) => {
+                // Map the backend response to your local structure.
+                // Expected backend response properties: book_id, rating, created_at, title, authors, image_url
+                this.ratingList = response.map((book: any) => ({
+                    ...book,
+                    rating: book.rating || 0,
+                    wishlisted: book.wishlisted || false // if provided by your backend
+                }));
+                this.ratingBackup = [...this.ratingList]; // Backup the original list for search functionality
+            },
+            error: (err: any) => {
+                console.error('Error fetching rated books:', err);
+            }
+        });
     }
 
+    getWishList() {
+        this.libraryService.getWishlist().subscribe({
+            next: (response: any) => {
+                // Map the backend response to your local structure.
+                // Expected backend response properties: book_id, rating, created_at, title, authors, image_url
+                this.wishList = response.map((book: any) => ({
+                    ...book,
+                    rating: book.rating || 0,
+                    wishlisted: book.wishlisted || false // if provided by your backend
+                }));
+                this.wishListBackup = [...this.wishList]; // Backup the original list for search functionality
+            },
+            error: (err: any) => {
+                console.error('Error fetching rated books:', err);
+            }
+        });
+    }
+
+    // Update the rating for a book using the backend endpoint
     rateBook(bookId: number, stars: number) {
-        const book = this.bookList.find(book => book.id === bookId);
-        if (book) {
-            book.stars = stars;
-        }
+        this.libraryService.editRating(bookId, stars).subscribe({
+            next: (response: any) => {
+                const book = this.ratingList.find(b => b.book_id === bookId);
+                if (book) {
+                    book.rating = response.rating; // Update the rating locally with the response
+                }
+                console.log('Rating updated:', response);
+            },
+            error: (err: any) => {
+                console.error('Error updating rating:', err);
+            }
+        });
     }
 
-    addToWishlist(bookId: number) {
-        // seach for book with id
-        const book = this.bookList.find(book => book.id === bookId)
-        if (book) {
-            book.wishList = !book.wishList
-        }
-
-        // filter out wishlist books
-        this.bookList = this.bookList.filter(book => book.wishList === true)
-        
+    // Delete a rating for a book using the backend endpoint
+    deleteRating(bookId: number) {
+        this.libraryService.deleteRating(bookId).subscribe({
+            next: (response: any) => {
+                // Remove the book from the local list after deletion
+                this.ratingList = this.ratingList.filter(b => b.book_id !== bookId);
+                this.ratingBackup = this.ratingList; // Update the backup list for search functionality
+            },
+            error: (err: any) => {
+                console.error('Error deleting rating:', err);
+            }
+        });
     }
 
+    // Remove a book from the wishlist using the backend endpoint
+    removeFromWishlist(bookId: number) {
+        this.libraryService.deleteWishlist(bookId).subscribe({
+            next: (response: any) => {
+                // Remove the book from the local wishlist after deletion
+                this.wishList = this.wishList.filter(b => b.book_id !== bookId);
+                this.wishListBackup = this.wishList; // Update the backup list for search functionality
+
+                console.log('Book removed from wishlist:', response);
+            },
+            error: (err: any) => {
+                console.error('Error removing from wishlist:', err);
+            }
+        });
+    }
+
+    // Navigation methods
     navigateToRecommend() {
-        // navigate to Recommend page
-        this.router.navigate(['/recommendation'])
+        this.router.navigate(['/recommendation']);
     }
 
     navigateToBrowse() {
-        // navigate to Browse page
-        this.router.navigate(['/browse'])
+        this.router.navigate(['/browse']);
     }
 
     navigateToSettings() {
-        // navigate to Settings page
-        this.router.navigate(['/settings'])
+        this.router.navigate(['/settings']);
     }
-
-    
 }
