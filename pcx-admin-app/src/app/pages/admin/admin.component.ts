@@ -2,6 +2,7 @@ import { Component, ViewChild, ElementRef, } from '@angular/core';
 import { Router } from '@angular/router';
 import { AddAdminModalService } from 'src/app/modals/add-admin-modal/add-admin-modal.service';
 import { AuthService } from 'src/app/core/http/auth/auth.service';
+import { AdminService } from 'src/app/core/http/admin/admin.service';
 
 @Component({
     selector: 'app-admin',
@@ -18,16 +19,8 @@ export class AdminComponent {
     filteredUsers: any[] = [];
 
     // Book and User data
-    books = [
-        { id: 1, title: 'Harry Potter', author: 'J.K. Rowling', status: 'Hidden' },
-        { id: 2, title: 'Lord of the Rings', author: 'J.R.R. Tolkien', status: 'Active' },
-        { id: 3, title: '1984', author: 'George Orwell', status: 'Active' }
-    ];
-
-    users = [
-        { id: 1, username: 'johndoe' },
-        { id: 2, username: 'janedoe' }
-    ];
+    books: any[] = [];
+    users: any[] = [];
 
     logout() {
         this.authServ.signout().subscribe({
@@ -53,13 +46,32 @@ export class AdminComponent {
                 console.error('Error fetching user info:', err);
             }
         });
+      this.adminService.listAllBooks().subscribe({
+        next: (response: any) => {
+          this.books = response.sort((a: any, b: any) => a.book_id - b.book_id);
+          this.filteredBooks = [...this.books];
+        },
+        error: (err: any) => {
+          console.error('Error fetching books:', err);
+        }
+      });
+
+      this.adminService.listAllAdmins().subscribe({
+        next: (response: any) => {
+          this.users = response
+          this.filteredUsers = [...this.users];
+        },
+        error: (err: any) => {
+          console.error('Error fetching admins:', err);
+        }
+      });
     }
 
     navigateToLogin() {
         this.router.navigate(['/sign-in'])
     }
 
-    constructor(private router: Router, private addAdminModalServe: AddAdminModalService, private authServ: AuthService) {
+    constructor(private router: Router, private addAdminModalServe: AddAdminModalService, private authServ: AuthService, private adminService: AdminService) {
         this.filteredBooks = [...this.books];
         this.filteredUsers = [...this.users];
     }
@@ -96,40 +108,53 @@ export class AdminComponent {
     }
 
     deleteUser() {
-        if (this.selectedUser) {
+      if (this.selectedUser) {
             const confirmDelete = window.confirm(`Are you sure you want to delete user "${this.selectedUser.username}"?`);
 
-      if (confirmDelete) {
-        this.users = this.users.filter(user => user.id !== this.selectedUser.id);
-        this.filteredUsers = [...this.users];
-        this.selectedUser = null;
-        console.log('User deleted.');
-      } else {
-        console.log('User deletion canceled.');
+        if (confirmDelete) {
+          this.adminService.deleteAdmin(this.selectedUser.id).subscribe({
+            next: (response: any) => {
+              this.users = this.users.filter(user => user.id !== this.selectedUser.id);
+              this.filteredUsers = [...this.users];
+              this.selectedUser = null;
+            },
+            error: (err: any) => {
+              console.error('Error deleting user:', err);
+            }
+          });
+
+          console.log('User deleted.');
+        } else {
+          console.log('User deletion canceled.');
+        }
       }
     }
-  }
 
-  addAdmin() {
-    this.addAdminModalServe.openModal().subscribe({
-      next: (data: any) => {
-        this.router.navigate(['/'])
-        if (data) {
-          this.users.push({ id: this.users.length + 1, username: data });
-          this.filteredUsers = [...this.users];
-          console.log('Admin added:', data);
+    addAdmin() {
+      this.addAdminModalServe.openModal().subscribe({
+        next: (data: any) => {
+          this.router.navigate(['/'])
+          if (data) {
+            this.adminService.addAdmin(data.username, data.password).subscribe({
+              next: (response: any) => {
+                this.users.push({ id: response.id, username: response.username });
+                this.filteredUsers = [...this.users];
+              },
+              error: (err: any) => {
+                console.error('Error adding admin:', err);
+                const errorMessage = err.error?.message ||
+                  err.message ||
+                  'Failed to add admin';
+                window.alert(errorMessage);
+              }
+            });
+          }
+        },
+        error: (err: any) => {
+          alert("Failed to sign up")
         }
-      },
-      error: (err: any) => {
-        alert("Failed to sign up")
-      }
-    })
-  }
-
-  
-
-  
-
+      })
+    }
 
     isTableVisible = true;
 
@@ -138,21 +163,27 @@ export class AdminComponent {
     @ViewChild('showButton') showButton!: ElementRef;
 
     get isSelectedBookHidden(): boolean {
-        return this.selectedBook?.status === 'Hidden';
+        return this.selectedBook?.is_visible === false;
     }
 
-    toggleBookStatus() {
-        if (this.selectedBook) {
-            this.selectedBook.status = this.selectedBook.status === 'Active' ? 'Hidden' : 'Active';
-
-            const index = this.books.findIndex(b => b.id === this.selectedBook.id);
-            if (index !== -1) {
-                this.books[index].status = this.selectedBook.status;
-            }
-
-            this.onSearch();
+  toggleBookStatus() {
+    if (this.selectedBook) {
+      const updatedVisibility = !this.selectedBook.is_visible; 
+      const book_id = this.selectedBook.book_id;
+      this.adminService.updateBookVisiblity(book_id, updatedVisibility).subscribe({
+        next: (response: any) => {
+          const index = this.books.findIndex(b => b.book_id === book_id);
+          if (index !== -1) {
+            this.books[index].is_visible = updatedVisibility;
+            this.selectedBook.is_visible = updatedVisibility;
+            this.onSearch(); 
+          }
+        },
+        error: (err: any) => {
+          console.error('Error changing book status:', err);
         }
+      });
     }
-
+  }
 }
 
