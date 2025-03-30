@@ -1,111 +1,128 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { BrowseService } from 'src/app/core/http/browse/browse.service';
 
 @Component({
-  selector: 'app-browse',
-  templateUrl: './browse.component.html',
-  styleUrls: ['./browse.component.css']
+    selector: 'app-browse',
+    templateUrl: './browse.component.html',
+    styleUrls: ['./browse.component.css']
 })
-export class BrowseComponent {
-    constructor(private router: Router) { }
-    bookList = [
-      { id: 1, title: 'Harry Potter', author: 'J.K. Rowling', wishList: true, stars: 4, image: 'assets/icons/main-icon.svg' },
-      { id: 2, title: 'The Hobbit', author: 'J.R.R. Tolkien', wishList: true, stars: 5, image: 'assets/icons/main-icon.svg' },
-      { id: 3, title: 'The Da Vinci Code', author: 'Dan Brown', wishList: true, stars: 3, image: 'assets/icons/main-icon.svg' },
-      { id: 4, title: 'The Alchemist', author: 'Paulo Coelho', wishList: true, stars: 4, image: 'assets/icons/main-icon.svg' },
-      { id: 5, title: 'The Catcher in the Rye', author: 'J.D. Salinger', wishList: true, stars: 2, image: 'assets/icons/main-icon.svg' },
-      { id: 6, title: 'The Great Gatsby', author: 'F. Scott Fitzgerald', wishList: true, stars: 5, image: 'assets/icons/main-icon.svg' },
-    ]
-    backup = [
-      { id: 1, title: 'Harry Potter', author: 'J.K. Rowling', wishList: true, stars: 4, image: 'assets/icons/main-icon.svg' },
-      { id: 2, title: 'The Hobbit', author: 'J.R.R. Tolkien', wishList: true, stars: 5, image: 'assets/icons/main-icon.svg' },
-      { id: 3, title: 'The Da Vinci Code', author: 'Dan Brown', wishList: true, stars: 3, image: 'assets/icons/main-icon.svg' },
-      { id: 4, title: 'The Alchemist', author: 'Paulo Coelho', wishList: true, stars: 4, image: 'assets/icons/main-icon.svg' },
-      { id: 5, title: 'The Catcher in the Rye', author: 'J.D. Salinger', wishList: true, stars: 2, image: 'assets/icons/main-icon.svg' },
-      { id: 6, title: 'The Great Gatsby', author: 'F. Scott Fitzgerald', wishList: true, stars: 5, image: 'assets/icons/main-icon.svg' },
-    ]
-  bookSearch: String = ''
- 
- 
-     addToWishlist(bookId: number) {
-         // seach for book with id
-         const book = this.bookList.find(book => book.id === bookId)
-         if (book) {
-             book.wishList = !book.wishList
-         }
-         
-     }
- 
-     rateBook(bookId: number, stars: number) {
-         const book = this.bookList.find(book => book.id === bookId);
-         if (book) {
-             book.stars = stars;
-         }
-     }
+export class BrowseComponent implements OnInit {
+    bookList: any[] = [];
+    backup: any[] = [];
+    bookSearch: string = '';
+    selectedSort: string = 'popularity';
+    displayCount: number = 0;  // controls the number of displayed books
 
-     navigateToLibrary() {
-         // navigate to library page
-         this.router.navigate(['/library'])
-     }
- 
-     navigateToRecommend() {
-         this.router.navigate(['/recommendation'])
-     }
- 
-     navigateToSettings() {
-         // navigate to library page
-         this.router.navigate(['/settings'])
+    constructor(private router: Router, private browseService: BrowseService) { }
+
+    ngOnInit() {
+        this.fetchBooks(this.selectedSort);
     }
 
-    searchBook() {
-        // filter out books that don't match search
-        this.bookList = this.
-        
-        backup.filter(book => book.title.toLowerCase().includes(this.bookSearch.toLowerCase()))
+    // Fetch books from the backend with the selected sort criteria.
+    fetchBooks(sort: string = 'popularity') {
+        this.browseService.listBooks(sort).subscribe({
+            next: (response: any) => {
+                // Map the backend response to the component's local structure.
+                this.bookList = response.map((book: any) => ({
+                    id: book.book_id,
+                    title: book.title,
+                    author: book.authors,
+                    image: book.image_url,
+                    stars: book.user_rating || 0,
+                    wishList: book.in_wishlist
+                }));
+                // Maintain a backup for search functionality.
+                this.backup = [...this.bookList];
+                // Set displayCount to one-tenth of the total books.
+                this.displayCount = Math.ceil(this.bookList.length * 0.1);
+                console.log('Fetched books:', this.bookList);
+            },
+            error: (err: any) => {
+                console.error('Error fetching books:', err);
+            }
+        });
     }
 
-    selectedSort: string = '';
+    // Toggle wishlist status by calling the appropriate backend endpoint.
+    addToWishlist(bookId: number) {
+        const book = this.bookList.find(b => b.id === bookId);
+        if (!book) return;
 
-    onSortChange(event: any) {
-        const value = event.target.value;
-        console.log('Sort changed:', value);
-
-        // Call sort function here
-        this.sortBooks(value);
-    }
-
-    sortBooks(criteria: string) {
-        switch (criteria) {
-            case 'az':
-                this.bookList.sort((a, b) => a.title.localeCompare(b.title));
-                break;
-            case 'za':
-                this.bookList.sort((a, b) => b.title.localeCompare(a.title));
-                break;
-            case 'popularity':
-                break;
-            case 'rating':
-                this.bookList.sort((a, b) => b.stars - a.stars);
-                break;
+        if (book.wishList) {
+            this.browseService.deleteWishlist(bookId).subscribe({
+                next: (response: any) => {
+                    book.wishList = false;
+                    console.log('Book removed from wishlist:', response);
+                },
+                error: (err: any) => {
+                    console.error('Error removing from wishlist:', err);
+                    alert('Error: ' + err.error.message);
+                }
+            });
+        } else {
+            this.browseService.addToWishlist(bookId).subscribe({
+                next: (response: any) => {
+                    book.wishList = true;
+                    console.log('Book added to wishlist:', response);
+                },
+                error: (err: any) => {
+                    console.error('Error adding to wishlist:', err);
+                    alert('Error: ' + err.error.message);
+                }
+            });
         }
     }
 
+    // Update the rating for a book using the backend endpoint.
+    rateBook(bookId: number, stars: number) {
+        this.browseService.editRating(bookId, stars).subscribe({
+            next: (response: any) => {
+                const book = this.bookList.find(b => b.id === bookId);
+                if (book) {
+                    book.stars = response.rating;
+                }
+                console.log('Rating updated:', response);
+            },
+            error: (err: any) => {
+                console.error('Error updating rating:', err);
+                alert('Error: ' + err.error.message);
+            }
+        });
+    }
 
+    // Filter the displayed books based on the search input.
+    searchBook() {
+        this.bookList = this.backup.filter(book =>
+            book.title.toLowerCase().includes(this.bookSearch.toLowerCase())
+        );
+        // Reset displayCount after filtering.
+        this.displayCount = Math.ceil(this.bookList.length * 0.1);
+    }
 
-  
- 
+    // When the sort criteria change, fetch books sorted by the selected criteria.
+    onSortChange(event: any) {
+        const value = event.target.value;
+        console.log('Sort changed:', value);
+        this.selectedSort = value;
+        this.fetchBooks(value);
+    }
 
+    // Show more books – here we simply reveal all the books.
+    showMoreBooks() {
+        this.displayCount = this.bookList.length;
+    }
 
+    navigateToLibrary() {
+        this.router.navigate(['/library']);
+    }
 
+    navigateToRecommend() {
+        this.router.navigate(['/recommendation']);
+    }
 
-
-    
-    
-    
-
-    
-
-    
-
-    
+    navigateToSettings() {
+        this.router.navigate(['/settings']);
+    }
 }

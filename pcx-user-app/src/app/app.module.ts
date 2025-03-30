@@ -18,6 +18,7 @@ import { BrowseComponent } from './pages/browse/browse.component';
 import { ConsentModalComponent } from './modals/consent-modal/consent-modal.component';
 import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { VerifyInterceptor } from './core/auth/verify.interceptor';
+import { ScrollingModule } from '@angular/cdk/scrolling';
 
 @NgModule({
     declarations: [
@@ -39,7 +40,8 @@ import { VerifyInterceptor } from './core/auth/verify.interceptor';
         CommonModule,
         BrowserAnimationsModule,
         MatDialogModule,
-        HttpClientModule
+        HttpClientModule,
+        ScrollingModule
     ],
     providers: [{
         provide: HTTP_INTERCEPTORS,

@@ -32,7 +32,7 @@
                         placeholder="Search..." [ngModelOptions]="{standalone: true}">
                 </div>
             </div>
-        
+
             <div class="sort-container">
                 <span class="sort-label">Sort by:</span>
                 <div class="custom-select">
@@ -53,12 +53,13 @@
         </div>
 
         <div class="book-container" style="width: 100%;">
-            <div class="book" *ngFor="let book of bookList">
+            <!-- Use Angular slice pipe to display only the first displayCount books -->
+            <div class="book" *ngFor="let book of bookList | slice:0:displayCount">
                 <div class="book">
                     <div>
                         <img class="book-image" [src]="book.image">
-                        <div class="book-title">{{book.title}}</div>
-                        <div class="book-author">{{book.author}}</div>
+                        <div class="book-title">{{ book.title }}</div>
+                        <div class="book-author">{{ book.author }}</div>
                         <div class="wishlist-button" (click)="addToWishlist(book.id)">
                             <span style="font-family: 'sarabun-medium'; margin-right: 1px;">Wishlist</span>
                             <img *ngIf="!book.wishList" src="../../../assets/icons/check.svg">
@@ -71,6 +72,10 @@
                         </div>
                     </div>
                 </div>
+            </div>
+            <!-- Show More button if there are more books to display -->
+            <div *ngIf="displayCount < bookList.length" style="text-align: center; margin-top: 20px;">
+                <button (click)="showMoreBooks()">Show More</button>
             </div>
         </div>
     </div>
