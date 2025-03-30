@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { AuthService } from 'src/app/core/http/auth/auth.service';
 import { ConsentModalService } from 'src/app/modals/consent-modal/consent-modal.service';
 
 @Component({
@@ -10,7 +11,7 @@ import { ConsentModalService } from 'src/app/modals/consent-modal/consent-modal.
 export class SignUpComponent {
 
 
-    constructor(private router: Router, private consentModalServe: ConsentModalService) { }
+    constructor(private router: Router, private consentModalServe: ConsentModalService, private authServ: AuthService) { }
     signinForm = {
         username: '',
         password: '',
@@ -83,35 +84,6 @@ export class SignUpComponent {
             this.warningUsernameMessage = '';
         }
 
-
-        // this.authServ.signIn(this.signinForm).subscribe({
-        //     next: (response: any) => {
-        //         localStorage.setItem('token', response["token"])
-        //         if (this.isChecked) {
-        //             localStorage.setItem('username', this.signinForm.username)
-        //             localStorage.setItem('password', this.signinForm.password)
-        //         }
-        //         else {
-        //             localStorage.removeItem('username')
-        //             localStorage.removeItem('password')
-        //         }
-        //     },
-        //     error: (err: any) => {
-        //         if (err["error"]["message"].includes("username")) {
-        //             this.warningUsernameMessage = "ชื่อผู้ใช้ไม่ถูกต้อง"
-        //             this.isUsernameEmtpy = true;
-        //         }
-        //         if (err["error"]["message"].includes("password")) {
-        //             this.warningPasswordMessage = "รหัสผ่านไม่ถูกต้อง"
-        //             this.isPasswordEmtpy = true;
-        //         }
-        //     },
-        //     complete: () => {
-        //         this.getProfileData();
-        //         this.router.navigate(['/'])
-        //     }
-        // })
-
     }
 
     navigateToSignIn(): void {
@@ -140,19 +112,27 @@ export class SignUpComponent {
         if (!hasError) {
             this.consentModalServe.openModal().subscribe({
                 next: (response: any) => {
-                    this.router.navigate(['/'])
+                    this.authServ.signUp(this.signinForm).subscribe({
+                        next: (response: any) => {
+                            localStorage.setItem('token', response["token"])
+                        },
+                        error: (err: any) => {
+                            if (err["error"]["message"].includes("username")) {
+                                this.warningUsernameMessage = "ชื่อผู้ใช้ไม่ถูกต้อง"
+                            }
+                            if (err["error"]["message"].includes("password")) {
+                                this.warningPasswordMessage = "รหัสผ่านไม่ถูกต้อง"
+                            }
+                        },
+                        complete: () => {
+                            this.router.navigate(['/'])
+                        }
+                    })
                 },
                 error: (err: any) => {
                     alert("Failed to sign up")
                 }
             })
-            if (this.isChecked) {
-                localStorage.setItem('username', this.signinForm.username);
-                localStorage.setItem('password', this.signinForm.password);
-            } else {
-                localStorage.removeItem('username');
-                localStorage.removeItem('password');
-            }
         }
     }
 }

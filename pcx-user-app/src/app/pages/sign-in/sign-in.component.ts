@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
+import { AuthService } from 'src/app/core/http/auth/auth.service';
 
 @Component({
   selector: 'app-sign-in',
@@ -15,7 +16,7 @@ export class SignInComponent {
         }
     }
 
-    constructor(private router: Router) { }
+    constructor(private router: Router, private authServ: AuthService) { }
     signinForm = {
         username: '',
         password: '',
@@ -44,34 +45,25 @@ export class SignInComponent {
             this.isPasswordEmtpy = false;
             this.warningUsernameMessage = '';
             this.warningPasswordMessage = '';
-            this.router.navigate(['/'])
-            // this.authServ.signIn(this.signinForm).subscribe({
-            //     next: (response: any) => {
-            //         localStorage.setItem('token', response["token"])
-            //         if (this.isChecked) {
-            //             localStorage.setItem('username', this.signinForm.username)
-            //             localStorage.setItem('password', this.signinForm.password)
-            //         }
-            //         else {
-            //             localStorage.removeItem('username')
-            //             localStorage.removeItem('password')
-            //         }
-            //     },
-            //     error: (err: any) => {
-            //         if (err["error"]["message"].includes("username")) {
-            //             this.warningUsernameMessage = "ชื่อผู้ใช้ไม่ถูกต้อง"
-            //             this.isUsernameEmtpy = true;
-            //         }
-            //         if (err["error"]["message"].includes("password")) {
-            //             this.warningPasswordMessage = "รหัสผ่านไม่ถูกต้อง"
-            //             this.isPasswordEmtpy = true;
-            //         }
-            //     },
-            //     complete: () => {
-            //         this.getProfileData();
-            //         this.router.navigate(['/'])
-            //     }
-            // })
+
+            this.authServ.signIn(this.signinForm).subscribe({
+                next: (response: any) => {
+                    localStorage.setItem('token', response["token"])
+                },
+                error: (err: any) => {
+                    if (err["error"]["message"].includes("username")) {
+                        this.warningUsernameMessage = "ชื่อผู้ใช้ไม่ถูกต้อง"
+                        this.isUsernameEmtpy = true;
+                    }
+                    if (err["error"]["message"].includes("password")) {
+                        this.warningPasswordMessage = "รหัสผ่านไม่ถูกต้อง"
+                        this.isPasswordEmtpy = true;
+                    }
+                },
+                complete: () => {
+                    this.router.navigate(['/'])
+                }
+            })
         }
     }
 }

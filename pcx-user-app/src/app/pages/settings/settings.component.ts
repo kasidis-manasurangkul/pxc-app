@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
+import { AuthService } from 'src/app/core/http/auth/auth.service';
 
 @Component({
     selector: 'app-settings',
@@ -8,7 +9,7 @@ import { Router } from '@angular/router';
 })
 export class SettingsComponent {
 
-    constructor(private router: Router) { }
+    constructor(private router: Router, private authServ: AuthService) { }
 
     navigateToLibrary() {
         this.router.navigate(['/library'])
@@ -35,6 +36,16 @@ export class SettingsComponent {
     }
 
     onLogout() {
-        this.navigateToSignIn();
+        this.authServ.signout().subscribe({
+            next: (response: any) => {
+                localStorage.removeItem('token');
+                this.router.navigate(['/sign-in']);
+            },
+            error: (err: any) => {
+                console.error('Logout error:', err);
+            },
+            complete: () => {
+            }
+        })
     }
 }

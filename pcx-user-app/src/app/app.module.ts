@@ -16,29 +16,36 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { SettingsComponent } from './pages/settings/settings.component';
 import { BrowseComponent } from './pages/browse/browse.component';
 import { ConsentModalComponent } from './modals/consent-modal/consent-modal.component';
+import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
+import { VerifyInterceptor } from './core/auth/verify.interceptor';
 
 @NgModule({
-  declarations: [
-    AppComponent,
-    SignInComponent,
-    SignUpComponent,
-    RecommendationComponent,
-    LibraryComponent,
-    GenresModalComponent,
-    SettingsComponent,
-    BrowseComponent,
-    ConsentModalComponent
-  ],
-  imports: [
-      BrowserModule,
-      AppRoutingModule,
-      FormsModule,
-      RouterModule,
-      CommonModule,
-      BrowserAnimationsModule,
-      MatDialogModule,
-  ],
-  providers: [],
-  bootstrap: [AppComponent]
+    declarations: [
+        AppComponent,
+        SignInComponent,
+        SignUpComponent,
+        RecommendationComponent,
+        LibraryComponent,
+        GenresModalComponent,
+        SettingsComponent,
+        BrowseComponent,
+        ConsentModalComponent
+    ],
+    imports: [
+        BrowserModule,
+        AppRoutingModule,
+        FormsModule,
+        RouterModule,
+        CommonModule,
+        BrowserAnimationsModule,
+        MatDialogModule,
+        HttpClientModule
+    ],
+    providers: [{
+        provide: HTTP_INTERCEPTORS,
+        useClass: VerifyInterceptor,
+        multi: true
+    }],
+    bootstrap: [AppComponent]
 })
 export class AppModule { }
