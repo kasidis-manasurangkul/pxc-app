@@ -1,5 +1,6 @@
 import { Component, ViewChild, ElementRef, } from '@angular/core';
 import { Router } from '@angular/router';
+import { AddAdminModalService } from 'src/app/modals/add-admin-modal/add-admin-modal.service';
 import { AuthService } from 'src/app/core/http/auth/auth.service';
 
 @Component({
@@ -58,7 +59,7 @@ export class AdminComponent {
         this.router.navigate(['/sign-in'])
     }
 
-    constructor(private router: Router, private authServ: AuthService) {
+    constructor(private router: Router, private addAdminModalServe: AddAdminModalService, private authServ: AuthService) {
         this.filteredBooks = [...this.books];
         this.filteredUsers = [...this.users];
     }
@@ -98,17 +99,36 @@ export class AdminComponent {
         if (this.selectedUser) {
             const confirmDelete = window.confirm(`Are you sure you want to delete user "${this.selectedUser.username}"?`);
 
-            if (confirmDelete) {
-                this.users = this.users.filter(user => user.id !== this.selectedUser.id);
-                this.filteredUsers = [...this.users];
-                this.selectedUser = null;
-                console.log('User deleted.');
-            } else {
-                console.log('User deletion canceled.');
-            }
-        }
+      if (confirmDelete) {
+        this.users = this.users.filter(user => user.id !== this.selectedUser.id);
+        this.filteredUsers = [...this.users];
+        this.selectedUser = null;
+        console.log('User deleted.');
+      } else {
+        console.log('User deletion canceled.');
+      }
     }
+  }
 
+  addAdmin() {
+    this.addAdminModalServe.openModal().subscribe({
+      next: (data: any) => {
+        this.router.navigate(['/'])
+        if (data) {
+          this.users.push({ id: this.users.length + 1, username: data });
+          this.filteredUsers = [...this.users];
+          console.log('Admin added:', data);
+        }
+      },
+      error: (err: any) => {
+        alert("Failed to sign up")
+      }
+    })
+  }
+
+  
+
+  
 
 
     isTableVisible = true;

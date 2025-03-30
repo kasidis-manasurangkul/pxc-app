@@ -10,6 +10,8 @@ import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { AddAdminModalComponent } from './modals/add-admin-modal/add-admin-modal.component';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { MatDialogModule } from '@angular/material/dialog';
 import { VerifyInterceptor } from './core/auth/verify.interceptor';
 
 @NgModule({
@@ -25,6 +27,8 @@ import { VerifyInterceptor } from './core/auth/verify.interceptor';
         FormsModule,
         RouterModule,
         CommonModule,
+        MatDialogModule,
+        BrowserAnimationsModule,
         HttpClientModule
     ],
     providers: [{
