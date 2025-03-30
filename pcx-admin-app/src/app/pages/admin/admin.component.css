@@ -101,6 +101,7 @@
     display: flex;
     flex: 1;
     position: relative;
+    overflow: auto;
 }
 
 .table-container {
@@ -115,6 +116,7 @@
 table {
     width: 100%;
     border-collapse: collapse;
+    overflow: auto;
 }
 
 thead {

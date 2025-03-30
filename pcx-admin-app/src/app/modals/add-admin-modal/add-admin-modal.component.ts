@@ -25,6 +25,13 @@ export class AddAdminModalComponent {
     private consentModalServ: AddAdminModalService
   ) { }
 
+  isUsernameEmtpy: boolean = false;
+  isPasswordEmtpy: boolean = false;
+  warningUsernameMessage: String = '';
+  warningPasswordMessage: String = '';
+
+
+
   addAdmin() {
     console.log("added");
     this.doneButtonFunction();
@@ -35,7 +42,17 @@ export class AddAdminModalComponent {
 * @return void
 */
   doneButtonFunction() {
-    this.dialogRef.close(this.signinForm.username);
+     if (this.signinForm.username == '') {
+            this.warningUsernameMessage = 'Please enter your username'
+            this.isUsernameEmtpy = true;
+        }
+        if (this.signinForm.password == '') {
+            this.warningPasswordMessage = 'Please enter your password'
+            this.isPasswordEmtpy = true;
+        }
+      else {
+      this.dialogRef.close({ username: this.signinForm.username, password: this.signinForm.password });
+      }
   }
 }
 

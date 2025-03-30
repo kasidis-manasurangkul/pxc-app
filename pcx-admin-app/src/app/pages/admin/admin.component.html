@@ -44,10 +44,11 @@
                     <tbody>
                         <tr *ngFor="let book of filteredBooks" (click)="onBookRowClick(book)"
                             [class.selected]="selectedBook === book">
-                            <td>{{ book.id }}</td>
+                            <td>{{ book.book_id }}</td>
                             <td>{{ book.title }}</td>
-                            <td>{{ book.author }}</td>
-                            <td>{{ book.status }}</td>
+                            <td>{{ book.authors }}</td>
+                            <td *ngIf="book.is_visible === true ">Active</td>
+                            <td *ngIf="book.is_visible === false ">Hidden</td>
                         </tr>
                     </tbody>
                 </table>
@@ -64,8 +65,8 @@
                     <tbody>
                         <tr *ngFor="let user of filteredUsers" (click)="onUserRowClick(user)"
                             [class.selected]="selectedUser === user">
-                            <td>{{ user.id }}</td>
-                            <td>{{ user.username }}</td>
+                            <td>{{user.id}}</td>
+                            <td>{{user.username}}</td>
                         </tr>
                     </tbody>
                 </table>
