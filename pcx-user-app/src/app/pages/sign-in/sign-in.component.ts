@@ -9,11 +9,6 @@ import { AuthService } from 'src/app/core/http/auth/auth.service';
 })
 export class SignInComponent {
     ngOnInit(): void {
-        if (localStorage.getItem('username') != null && localStorage.getItem('password') != null) {
-            this.signinForm.username = localStorage.getItem('username')!
-            this.signinForm.password = localStorage.getItem('password')!
-            this.isChecked = true;
-        }
     }
 
     constructor(private router: Router, private authServ: AuthService) { }

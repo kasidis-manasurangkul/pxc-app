@@ -1,66 +1,141 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
+import { AuthService } from 'src/app/core/http/auth/auth.service';
+import { RecommendationService } from 'src/app/core/http/recommendation/recommendation.service';
 import { GenresModaService } from 'src/app/modals/genres-modal/genres-moda.service';
 
 @Component({
-  selector: 'app-recommendation',
-  templateUrl: './recommendation.component.html',
-  styleUrls: ['./recommendation.component.css']
+    selector: 'app-recommendation',
+    templateUrl: './recommendation.component.html',
+    styleUrls: ['./recommendation.component.css']
 })
 export class RecommendationComponent {
 
-    constructor(private router: Router, private genresService: GenresModaService) {}
-    bookList = [
-        { id: 1, title: 'Harry Potter', author: 'J.K. Rowling', wishList: false, stars: 4, image: 'assets/icons/main-icon.svg'},
-        { id: 2, title: 'The Hobbit', author: 'J.R.R. Tolkien', wishList: false, stars: 5, image: 'assets/icons/main-icon.svg'},
-        { id: 3, title: 'The Da Vinci Code', author: 'Dan Brown', wishList: false, stars: 3, image: 'assets/icons/main-icon.svg'},
-        { id: 4, title: 'The Alchemist', author: 'Paulo Coelho', wishList: false, stars: 4, image: 'assets/icons/main-icon.svg'},
-        { id: 5, title: 'The Catcher in the Rye', author: 'J.D. Salinger', wishList: false, stars: 2, image: 'assets/icons/main-icon.svg'},
-        { id: 6, title: 'The Great Gatsby', author: 'F. Scott Fitzgerald', wishList: false, stars: 5, image: 'assets/icons/main-icon.svg'},
-    ]
+    // Initialize as empty; will be populated from the backend
+    bookList: any[] = [];
+
+    constructor(
+        private router: Router,
+        private genresService: GenresModaService,
+        private authServ: AuthService,
+        private recommendationServ: RecommendationService
+    ) { }
 
     ngOnInit() {
-        this.openGenresModal();
+        this.getUserInfo();
     }
 
-    openGenresModal() {
-        this.genresService.openModal().subscribe({
-            next: (data: any) => {
-                if (data) {
-                    console.log(data)
+    getUserInfo() {
+        this.authServ.getUserInfo().subscribe({
+            next: (response: any) => {
+                if (!response.selectedGenre) {
+                    this.openGenresModal();
+                } else {
+                    // Fetch recommendations if the user has already selected genres
+                    this.getRecommendations();
                 }
+            },
+            error: (err: any) => {
+                console.error('Error fetching user info:', err);
             }
         });
     }
 
-    addToWishlist(bookId: number) {
-        // seach for book with id
-        const book = this.bookList.find(book => book.id === bookId)
-        if (book) {
-            book.wishList = !book.wishList
-        }
-        
+    openGenresModal() {
+        this.genresService.openModal().subscribe({
+            next: (data: any[]) => {
+                this.recommendationServ.selectGenres(data).subscribe({
+                    next: () => {
+                        // Once the genres are set, fetch the recommendations
+                        this.getRecommendations();
+                    },
+                    error: (err: any) => {
+                        alert('Error: ' + err.error.message);
+                    }
+                });
+            }
+        });
     }
 
+    // Fetch the list of recommended books from the backend
+    getRecommendations() {
+        this.recommendationServ.getRecommendations().subscribe({
+            next: (response: any) => {
+                this.bookList = response.map((book: any) => ({
+                    ...book,
+                    stars: book.stars || 0, // Default to 0 if no stars are provided
+                    wishList: book.wishList || false // Default to false if not in wishlist
+                }));
+                console.log('Recommended books:', this.bookList);
+            },
+            error: (err: any) => {
+                console.error('Error fetching recommendations:', err);
+            }
+        });
+    }
+
+    // Edit the rating for a book by calling the backend endpoint
     rateBook(bookId: number, stars: number) {
-        const book = this.bookList.find(book => book.id === bookId);
-        if (book) {
-            book.stars = stars;
-        }
+        this.recommendationServ.editRating(bookId, stars).subscribe({
+            next: (response: any) => {
+                const book = this.bookList.find(b => b.book_id === bookId);
+                if (book) {
+                    book.rating = response.rating; // Update the book's rating in the local list
+                }
+                console.log('Rating updated:', response);
+            },
+            error: (err: any) => {
+                console.error('Error updating rating:', err);
+            }
+        });
     }
 
+    // Add a book to the wishlist via the backend endpoint
+    addToWishlist(bookId: number) {
+        // Check if the book is already wishlisted
+        const book = this.bookList.find(b => b.book_id === bookId);
+        if (book && book.wishlisted) {
+            this.recommendationServ.removeFromWishlist(bookId).subscribe({
+                next: (response: any) => {
+                    const book = this.bookList.find(b => b.book_id === bookId);
+                    if (book) {
+                        book.wishlisted = false;
+                    }
+                    console.log('Book removed from wishlist:', response);
+                },
+                error: (err: any) => {
+                    console.error('Error removing from wishlist:', err);
+                    alert('Error: ' + err.error.message);
+                }
+            });
+        }
+        else {
+            this.recommendationServ.addToWishlist(bookId).subscribe({
+                next: (response: any) => {
+                    const book = this.bookList.find(b => b.book_id === bookId);
+                    if (book) {
+                        book.wishlisted = true;
+                    }
+                    console.log('Book added to wishlist:', response);
+                },
+                error: (err: any) => {
+                    console.error('Error adding to wishlist:', err);
+                    alert('Error: ' + err.error.message);
+                }
+            });
+        }
+
+    }
 
     navigateToLibrary() {
-        // navigate to library page
-        this.router.navigate(['/library'])
+        this.router.navigate(['/library']);
     }
 
     navigateToBrowse() {
-        this.router.navigate(['/browse'])
+        this.router.navigate(['/browse']);
     }
 
     navigateToSettings() {
-        // navigate to library page
-        this.router.navigate(['/settings'])
+        this.router.navigate(['/settings']);
     }
 }

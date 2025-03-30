@@ -24,18 +24,18 @@
         <div class="book" *ngFor="let book of bookList">
             <div class="book">
                 <div>
-                    <img class="book-image" [src]="book.image">
+                    <img class="book-image" [src]="book.image_url">
                     <div class="book-title">{{book.title}}</div>
                     <div class="book-author">{{book.author}}</div>
-                    <div class="wishlist-button" (click)="addToWishlist(book.id)">
+                    <div class="wishlist-button" (click)="addToWishlist(book.book_id)">
                         <span style="font-family: 'sarabun-medium'; margin-right: 1px;">Wishlist</span>
-                        <img *ngIf="!book.wishList" src="../../../assets/icons/check.svg">
-                        <img *ngIf="book.wishList" src="../../../assets/icons/cross.svg">
+                        <img *ngIf="!book.wishlisted" src="../../../assets/icons/check.svg">
+                        <img *ngIf="book.wishlisted" src="../../../assets/icons/cross.svg">
                     </div>
                     <div class="rating">
                         <img class="star"
-                            [src]="i <= book.stars ? '../../../assets/icons/star.svg' : '../../../assets/icons/no-star.svg'"
-                            (click)="rateBook(book.id, i)" *ngFor="let i of [1, 2, 3, 4, 5]" />
+                            [src]="i <= book.rating ? '../../../assets/icons/star.svg' : '../../../assets/icons/no-star.svg'"
+                            (click)="rateBook(book.book_id, i)" *ngFor="let i of [1, 2, 3, 4, 5]" />
                     </div>
 
                 </div>
